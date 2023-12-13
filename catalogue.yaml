@@ -51,6 +51,42 @@
       dest: /usr/local/bin
       remote_src: yes
   
+  - name: npm installing
+    ansible.builtin.command: npm install 
+    args:
+      chdir: /app
+
+  - name: copy to catalogue.service
+    ansible.builtin.copy:
+      src: catalogue.service
+      dest: /etc/systemd/system/catalogue.service
+  
+  - name: enable and start and daemon-reload
+    ansible.builtin.systemd_service:
+      daemon_reload: true
+
+  - name: enable and start and daemon-reload
+    ansible.builtin.systemd_service:
+      name: catalogue
+      enabled: true
+      state: restarted
+  
+  - name: copy mongo.repo
+    ansible.builtin.copy:
+      src: mongo.repo
+      dest: /etc/yum.repos.d/mongo.repo
+  
+  - name: installing mongodb-org-shell
+    ansible.builtin.yum:
+      name: mongodb-org-shell
+      state: installed
+      
+  - name: load the scema
+    ansible.builtin.shell: 'mongo --host mongodb.venkateshamsonnalia143.online < /app/schema/catalogue.js'
+
+      
+    
+  
 
     
 
