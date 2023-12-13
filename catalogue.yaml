@@ -13,7 +13,7 @@
   - name: check user already exists or not
     ansible.builtin.command: id roboshop
     register: output
-      ignore_errors: true
+    ignore_errors: true
   
   - name: print the out of user
     ansible.builtin.debug:
