@@ -28,10 +28,17 @@
     ansible.builtin.stat:
       path: /app
     register: Directory
+    ignore_errors: true
   
   - name: print the output of directory
     ansible.builtin.debug:
       msg: "output : {{Directory}}"
+
+  - name: create directory /app
+    ansible.builtin.file:
+      path: /app
+      state: directory
+    when: Directory.stat.exists == False
   
 
     
