@@ -52,7 +52,7 @@
       remote_src: yes
   
   - name: npm installing
-    ansible.builtin.command: npm install 
+    ansible.builtin.shell: npm install 
     args:
       chdir: /app
 
@@ -80,7 +80,7 @@
     ansible.builtin.yum:
       name: mongodb-org-shell
       state: installed
-      
+
   - name: load the scema
     ansible.builtin.shell: 'mongo --host mongodb.venkateshamsonnalia143.online < /app/schema/catalogue.js'
 
