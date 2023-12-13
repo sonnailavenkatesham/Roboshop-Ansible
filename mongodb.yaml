@@ -12,4 +12,19 @@
       name: mongodb-org
       state: installed
   
-  
+  - name: start and enable mongod services
+    ansible.builtin.service:
+      name: mongod
+      enabled: yes
+      state: started
+      
+  - name: replacin the 127.0.0.1 to 0.0.0.0
+    ansible.builtin.replace:
+      path: /etc/mongod.conf
+      regexp: "127.0.0.1"
+      replace: "0.0.0.0"
+      
+  - name: start and enable mongod services
+    ansible.builtin.service:
+      name: mongod
+      state: started
