@@ -12,12 +12,12 @@
   
   - name: check user already exists or not
     ansible.builtin.command: id roboshop
-    register: user
+    register: output
       ignore_errors: true
   
   - name: print the out of user
     ansible.builtin.debug:
-      msg: "Output : {{user}}"
+      msg: "Output : {{output}}"
 
   - when: user.rc != 0
     name: create user roboshop
