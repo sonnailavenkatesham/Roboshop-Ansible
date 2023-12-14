@@ -3,7 +3,9 @@
   become: yes
   tasks:
   - name: downloading the node source
-    ansible.builtin.shell: "curl -sL https://rpm.nodesource.com/setup_lts.x | bash"
+    ansible.builtin.shell: dnf module disable nodejs -y
+  - name: downloading the node source
+    ansible.builtin.shell: dnf module enable nodejs:18 -y
   
   - name: installing nodejs
     ansible.builtin.yum:
