@@ -82,7 +82,7 @@
       state: installed
 
   - name: load the scema
-    ansible.builtin.command: mongo --host mongodb.venkateshamsonnalia143.online < /app/schema/catalogue.js
+    ansible.builtin.command: mongo --host 172.31.19.55 < /app/schema/catalogue.js
 
       
     
