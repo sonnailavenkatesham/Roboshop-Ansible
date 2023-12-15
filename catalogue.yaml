@@ -84,7 +84,7 @@
       state: installed
 
   - name: load the scema
-    ansible.builtin.command: mongo --host mongodb.venkateshamsonnalia143.online < /app/schema/catalogue.js
+    ansible.builtin.shell: mongo --host mongodb.venkateshamsonnalia143.online < /app/schema/catalogue.js
 
   - name: restart catalogue
     ansible.builtin.service:
