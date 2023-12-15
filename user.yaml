@@ -1,0 +1,90 @@
+- name: installing user component
+  hosts: user
+  become: yes
+  tasks:
+  - name: downloading the node source
+    ansible.builtin.shell: dnf module disable nodejs -y
+  - name: downloading the node source
+    ansible.builtin.shell: dnf module enable nodejs:18 -y
+  
+  - name: installing nodejs
+    ansible.builtin.yum:
+      name: nodejs
+      state: installed
+
+ - name: check user already exists or not
+    ansible.builtin.command: id roboshop
+    register: user
+    ignore_errors: true
+  
+  - name: print the out of user
+    ansible.builtin.debug:
+      msg: "Output : {{user}}"
+
+  - when: user.rc != 0
+    name: create user roboshop
+    ansible.builtin.user:
+      name: roboshop
+  
+  - name: check the /app directory already exists or not
+    ansible.builtin.stat:
+      path: /app
+    register: Directory
+    ignore_errors: true
+  
+  - name: print the output of directory
+    ansible.builtin.debug:
+      msg: "output : {{Directory}}"
+
+  - name: create directory /app
+    ansible.builtin.file:
+      path: /app
+      state: directory
+    when: Directory.stat.exists == False
+  
+  - name: download and unzip user
+    ansible.builtin.unarchive:
+      src: https://roboshop-builds.s3.amazonaws.com/user.zip
+      dest: /app
+      remote_src: yes
+
+  - name: npm install 
+    ansible.builtin.command: npm install 
+    args:
+      chdir: /app
+  
+  - name: copy ther user.service
+    ansible.builtin.copy:
+      src: user.service
+      dest: /etc/systemd/system/user.service
+
+  - name: daemon-reload
+    ansible.builtin.systemd:
+      name: user
+      daemon_reload: true
+  
+  - name: enalbe and start user
+    ansible.builtin.service:
+      name: user
+      enabled: true
+      state: started
+
+  - name: copy mongo.repo
+    ansible.builtin.service:
+      src: mongo.repo
+      dest: /etc/yum.repos.d/mongo.
+  
+  - name: installing mongodb-org-shell
+    ansible.builtin.yum:
+      name: mongodb-org-shell
+      state: installed
+  
+  - name: load scema to user
+    ansible.builtin.shell: mongo --host mongodb.venkateshamsonnalia143.online < /app/schema/user.js
+  
+  - name: enalbe and start user
+    ansible.builtin.service:
+      name: user
+      enabled: true
+      state: started
+  
