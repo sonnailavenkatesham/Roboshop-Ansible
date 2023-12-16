@@ -1,0 +1,71 @@
+- name: installing cart component
+  hosts: cart
+  become: yes
+  tasks:
+  - name: module enableing nodejs:18 -y
+    ansible.builtin.shell: dnf module disable nodejs -y
+  
+  - name: module enableing nodejs:18 -y
+    ansible.builtin.shell: dnf module enable nodejs:18 -y
+  
+  - name: installing nodejs
+    ansible.builtin.yum:
+      name: nodejs
+      state: installed
+  
+  - name: check user alredy exists or not
+    ansible.builtin.command: id roboshop
+    register: user
+    ignore_errors: true
+  
+  - name: print the output
+    ansible.builtin.debug:
+      msg: "the output : {{user}}"
+  
+  - name: create user roboshop
+    ansible.builtin.user:
+      name: roboshop
+    when: user.rc != 0
+
+  - name: check app directory is already exists or not
+    ansible.builtin.stat: 
+      path: /app
+    register: Directory
+    ignore_errors: true
+  
+  - name: print the output of app directory
+    ansible.builtin.debug:
+      msg: " output for app Direv=ctory: {{Directory}}"
+  
+  - name: create app directory when app directory not exists
+    ansible.builtin.file:
+      path: /app
+      state: directory
+    when: Directory.stat.exist == False
+  
+  - name: download and unzip the catalogue code
+    ansible.builtin.unarchive:
+      src: https://roboshop-builds.s3.amazonaws.com/cart.zip
+      dest: /app
+      remote_src: yes
+  
+  - name: npm install
+    ansible.buitlin.command: npm install
+    args:
+      chdir: /app
+  
+  - name: copy the cart.service
+    ansible.builtin.copy:
+      src: cart.service
+      dest: /etc/systemd/system/cart.service
+
+  - name: daemon-reload cart
+    ansible.builtin.systemd:
+      name: cart
+      daemon_reload: true
+  - name: enable and start cart
+    ansible.builtin.service:
+      name: cart
+      enabled: true
+      state: started
+
