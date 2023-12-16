@@ -41,7 +41,7 @@
     ansible.builtin.file:
       path: /app
       state: directory
-    when: Directory.stat.exist == False
+    when: Directory.stat.exists == False
   
   - name: download and unzip the catalogue code
     ansible.builtin.unarchive:
